@@ -10,11 +10,11 @@
             android:title="@string/menu_all_cards" />
         <item
             android:id="@+id/nav_trash"
-            android:icon="@drawable/ic_card_list"
+            android:icon="@drawable/ic_trash"
             android:title="@string/menu_trash" />
         <item
             android:id="@+id/nav_sections"
-            android:icon="@drawable/ic_card_list"
+            android:icon="@drawable/ic_sections"
             android:title="@string/menu_sections" />
     </group>
 
