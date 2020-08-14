@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="LabelFor"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:orientation="vertical"
+    tools:context=".card.AddCardActivity">
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/card_section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:chipIconSize="20dp"
+        android:text="@string/card_section" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/card_front"/>
+
+    <EditText
+        android:id="@+id/card_front"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="5"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/card_back"/>
+    <EditText
+        android:id="@+id/card_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="5"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine" />
+</LinearLayout>

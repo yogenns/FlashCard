@@ -14,7 +14,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+
+import tool.yogendra.flashcard.card.AddCardActivity;
 
 public class HomeActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,9 +30,8 @@ public class HomeActivity extends AppCompatActivity  implements NavigationView.O
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(HomeActivity.this,"Add New Flash Card",Toast.LENGTH_LONG).show();
-                //Intent addIntent = AddFlashCardActivity.makeIntent(HomeActivity.this);
-                //startActivity(addIntent);
+                Intent addIntent = AddCardActivity.makeIntent(HomeActivity.this);
+                startActivity(addIntent);
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

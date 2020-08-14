@@ -5,4 +5,10 @@
     <string name="menu_sections">Sections</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="card_title">Title</string>
+    <string name="card_section">Select Section</string>
+    <string name="card_front">Front View</string>
+    <string name="card_back">Back View</string>
+    <string name="card_save">Save</string>
+    <string name="card_new">Add New Card</string>
 </resources>
