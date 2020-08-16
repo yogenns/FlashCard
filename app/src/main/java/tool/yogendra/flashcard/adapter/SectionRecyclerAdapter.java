@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,11 +33,25 @@ public class SectionRecyclerAdapter extends RecyclerView.Adapter<SectionRecycler
         return new ViewHolder(v);
     }
 
+    int selectedPosition = -1;
+
     @Override
-    public void onBindViewHolder(@NonNull SectionRecyclerAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SectionRecyclerAdapter.ViewHolder holder, final int position) {
+        if (selectedPosition == position) {
+            holder.sectionCardSelected.setImageResource(R.drawable.ic_checked);
+        } else {
+            holder.sectionCardSelected.setImageDrawable(null);
+        }
         final SectionParams item = listSections.get(position);
         holder.sectionCardName.setText(item.getSectionName());
         holder.sectionCardColor.setBackgroundColor(Color.parseColor(item.getSectionColor()));
+        holder.sectionCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedPosition = position;
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -49,13 +64,19 @@ public class SectionRecyclerAdapter extends RecyclerView.Adapter<SectionRecycler
         CardView sectionCardView;
         TextView sectionCardName;
         TextView sectionCardColor;
+        ImageView sectionCardSelected;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             sectionCardView = itemView.findViewById(R.id.sectionCardView);
             sectionCardName = itemView.findViewById(R.id.sectionCardNameTxt);
             sectionCardColor = itemView.findViewById(R.id.sectionCardColorTxt);
+            sectionCardSelected = itemView.findViewById(R.id.sectionCardSelected);
         }
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
     }
 
     public List<SectionParams> getListSections() {

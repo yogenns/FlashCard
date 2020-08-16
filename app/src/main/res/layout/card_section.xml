@@ -19,6 +19,13 @@
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/sectionCardSelected"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="5dp"
+                android:contentDescription="@string/card_checked" />
             <TextView
                 android:id="@+id/sectionCardColorTxt"
                 android:layout_width="20dp"

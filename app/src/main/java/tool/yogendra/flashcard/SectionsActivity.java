@@ -14,6 +14,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import tool.yogendra.flashcard.adapter.SectionRecyclerAdapter;
+import tool.yogendra.flashcard.database.DBConstants;
 import tool.yogendra.flashcard.database.SQLDBManager;
 import tool.yogendra.flashcard.database.SectionParams;
 import tool.yogendra.flashcard.fragment.AddSectionDialog;
@@ -33,6 +36,7 @@ public class SectionsActivity extends AppCompatActivity {
     SectionRecyclerAdapter adapter;
     SQLDBManager sqldbManager;
     List<SectionParams> paramList;
+    boolean isAddCard = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,11 @@ public class SectionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sections);
         setTitle(getResources().getString(R.string.menu_sections));
 
+        String str = getIntent().getStringExtra("AddCard");
+        Log.i(TAG, "String Extra = " + str);
+        if (str != null && str.equals("true")) {
+            isAddCard = true;
+        }
         addButtonListener();
         addRecyclerView();
     }
@@ -62,6 +71,39 @@ public class SectionsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (isAddCard) {
+            getMenuInflater().inflate(R.menu.save_menu, menu);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_save) {
+            //2saveCardData();
+            if (adapter.getSelectedPosition() != -1) {
+                SectionParams sectionParams = adapter.getListSections().get(adapter.getSelectedPosition());
+
+                Intent output = new Intent();
+                output.putExtra(DBConstants.SECTION_NAME, sectionParams.getSectionName());
+                output.putExtra(DBConstants.SECTION_ID, sectionParams.getSectionId());
+                output.putExtra(DBConstants.SECTION_COLOR, sectionParams.getSectionColor());
+                setResult(RESULT_OK, output);
+                finish();
+                return true;
+            } else {
+                Toast.makeText(SectionsActivity.this, "Please Select a Section", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private ItemTouchHelper.Callback createHelperCallback() {
         return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
@@ -73,6 +115,7 @@ public class SectionsActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 deleteSection(viewHolder.getAdapterPosition());
             }
+
         };
     }
 
