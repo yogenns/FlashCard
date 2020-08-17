@@ -10,5 +10,18 @@ public class DBConstants {
     static final String CREATE_SECTION_TABLE = "CREATE TABLE " + SECTION_TABLE + " ("
             + SECTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + SECTION_NAME + " TEXT, "
-            + SECTION_COLOR + " CURRENT_TIMESTAMP );";
+            + SECTION_COLOR + " TEXT );";
+
+    public static final String FLASH_CARD_ID = "ID";
+    public static final String FLASH_CARD_TABLE = "FLASH_CARD_TABLE";
+    public static final String FLASH_CARD_FRONT = "FRONT";
+    public static final String FLASH_CARD_BACK = "BACK";
+    public static final String FLASH_CARD_SECTION_ID = "SECTION_ID";
+    static final String CREATE_CARD_TABLE = "CREATE TABLE " + FLASH_CARD_TABLE + " ("
+            + FLASH_CARD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + FLASH_CARD_FRONT + " TEXT, "
+            + FLASH_CARD_BACK + " TEXT, "
+            + FLASH_CARD_SECTION_ID + " INTEGER, "
+            + "FOREIGN KEY (" + FLASH_CARD_SECTION_ID + ") REFERENCES " + SECTION_TABLE + " (" + SECTION_ID + ") "
+            + ");";
 }

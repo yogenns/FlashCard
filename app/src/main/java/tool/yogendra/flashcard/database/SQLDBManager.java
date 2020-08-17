@@ -22,8 +22,10 @@ public class SQLDBManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i(TAG, "SECTION TABLE [" + DBConstants.CREATE_SECTION_TABLE + "]");
+        Log.i(TAG, "FLASH CARD TABLE [" + DBConstants.CREATE_CARD_TABLE + "]");
 
         sqLiteDatabase.execSQL(DBConstants.CREATE_SECTION_TABLE);
+        sqLiteDatabase.execSQL(DBConstants.CREATE_CARD_TABLE);
 
     }
 
@@ -56,5 +58,32 @@ public class SQLDBManager extends SQLiteOpenHelper {
 
     public void deleteSection(int sectionId) {
         this.getWritableDatabase().delete(DBConstants.SECTION_TABLE, DBConstants.SECTION_ID + "=?", new String[]{String.valueOf(sectionId)});
+    }
+
+    //FLASH CARD Table, Insert, Read All, Delete
+    public int insertFlashCard(ContentValues contentValues) {
+        long id = this.getWritableDatabase().insert(DBConstants.FLASH_CARD_TABLE, "", contentValues);
+        return (int) id;
+    }
+
+    public List<FlashCardParams> getAllFlashCardsDataList() {
+        List<FlashCardParams> paramsList = new ArrayList<>();
+        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
+        sqLiteQueryBuilder.setTables(DBConstants.FLASH_CARD_TABLE);
+        Cursor cursor = sqLiteQueryBuilder.query(this.getWritableDatabase(), null, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            FlashCardParams param = new FlashCardParams(
+                    cursor.getInt(cursor.getColumnIndex(DBConstants.FLASH_CARD_ID)),
+                    cursor.getString(cursor.getColumnIndex(DBConstants.FLASH_CARD_FRONT)),
+                    cursor.getString(cursor.getColumnIndex(DBConstants.FLASH_CARD_BACK)),
+                    cursor.getString(cursor.getColumnIndex(DBConstants.FLASH_CARD_SECTION_ID))
+            );
+            paramsList.add(param);
+        }
+        return paramsList;
+    }
+
+    public void deleteFlashCard(int flashCardId) {
+        this.getWritableDatabase().delete(DBConstants.FLASH_CARD_TABLE, DBConstants.FLASH_CARD_ID + "=?", new String[]{String.valueOf(flashCardId)});
     }
 }
