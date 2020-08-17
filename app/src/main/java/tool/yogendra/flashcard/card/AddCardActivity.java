@@ -3,6 +3,7 @@ package tool.yogendra.flashcard.card;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,11 +21,13 @@ import com.google.android.material.chip.Chip;
 import tool.yogendra.flashcard.R;
 import tool.yogendra.flashcard.SectionsActivity;
 import tool.yogendra.flashcard.database.DBConstants;
+import tool.yogendra.flashcard.database.SQLDBManager;
 
 public class AddCardActivity extends AppCompatActivity {
 
     private static String TAG = "AddCardActivity";
     private static final int SECTION_ACTIVITY_REQUEST_CODE = 0;
+    SQLDBManager sqldbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,8 @@ public class AddCardActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    int sectionId = -1;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -73,7 +78,7 @@ public class AddCardActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
 
                 String sectionName = data.getStringExtra(DBConstants.SECTION_NAME);
-                int sectionId = data.getIntExtra(DBConstants.SECTION_ID, -1);
+                sectionId = data.getIntExtra(DBConstants.SECTION_ID, -1);
                 String sectionColor = data.getStringExtra(DBConstants.SECTION_COLOR);
                 Log.i(TAG, "Selected sectionName " + sectionName + " sectionId " + sectionId + " sectionColor " + sectionColor);
                 Chip sectionTxt = findViewById(R.id.card_section);
@@ -89,12 +94,38 @@ public class AddCardActivity extends AppCompatActivity {
     }
 
     private void saveCardData() {
-        EditText frontTxt = findViewById(R.id.card_front);
-        EditText backTxt = findViewById(R.id.card_back);
-        Chip sectionTxt = findViewById(R.id.card_section);
-        String data = " Front= " + frontTxt.getText() + " Back= " + backTxt.getText() + " Section= " + sectionTxt.getText();
-        Log.i(TAG, "Data= " + data);
-        Toast.makeText(AddCardActivity.this, "Data= " + data, Toast.LENGTH_LONG).show();
+        try {
+            sqldbManager = new SQLDBManager(this);
+            EditText frontTxt = findViewById(R.id.card_front);
+            EditText backTxt = findViewById(R.id.card_back);
+            Chip sectionTxt = findViewById(R.id.card_section);
+            if (sectionTxt.getText().equals(getResources().getString(R.string.card_section)) || sectionId == -1) {
+                Log.i(TAG, "Please select a section ");
+                Toast.makeText(AddCardActivity.this, "Please select a section ", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (frontTxt.getText().toString().isEmpty()) {
+                Log.i(TAG, "Please provide Front Data ");
+                Toast.makeText(AddCardActivity.this, "Please provide Front Data ", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (backTxt.getText().toString().isEmpty()) {
+                Log.i(TAG, "Please provide Back Data ");
+                Toast.makeText(AddCardActivity.this, "Please provide Back Data ", Toast.LENGTH_LONG).show();
+                return;
+            }
+            String data = " Front= " + frontTxt.getText() + " Back= " + backTxt.getText() + " Section= " + sectionTxt.getText();
+            Log.i(TAG, "Data= " + data);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DBConstants.FLASH_CARD_FRONT, frontTxt.getText().toString());
+            contentValues.put(DBConstants.FLASH_CARD_BACK, backTxt.getText().toString());
+            contentValues.put(DBConstants.FLASH_CARD_SECTION_ID, sectionId);
+            sqldbManager.insertFlashCard(contentValues);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(AddCardActivity.this, "Unable to save Flash Card data " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     public static Intent makeIntent(Context context) {
