@@ -72,11 +72,23 @@ public class SQLDBManager extends SQLiteOpenHelper {
         sqLiteQueryBuilder.setTables(DBConstants.FLASH_CARD_TABLE);
         Cursor cursor = sqLiteQueryBuilder.query(this.getWritableDatabase(), null, null, null, null, null, null);
         while (cursor.moveToNext()) {
+            //Get Section Details
+            SQLiteQueryBuilder sqLiteQueryBuilderSection = new SQLiteQueryBuilder();
+            sqLiteQueryBuilderSection.setTables(DBConstants.SECTION_TABLE);
+            Cursor sectionCursor = sqLiteQueryBuilderSection.query(this.getWritableDatabase(), null,
+                    DBConstants.SECTION_ID + "=" + cursor.getInt(cursor.getColumnIndex(DBConstants.FLASH_CARD_SECTION_ID)), null, null, null, null);
+            String sectionName = "";
+            String sectionColor = "";
+            if (sectionCursor.moveToNext()) {
+                sectionName = sectionCursor.getString(sectionCursor.getColumnIndex(DBConstants.SECTION_NAME));
+                sectionColor = sectionCursor.getString(sectionCursor.getColumnIndex(DBConstants.SECTION_COLOR));
+            }
+            sectionCursor.close();
             FlashCardParams param = new FlashCardParams(
                     cursor.getInt(cursor.getColumnIndex(DBConstants.FLASH_CARD_ID)),
                     cursor.getString(cursor.getColumnIndex(DBConstants.FLASH_CARD_FRONT)),
                     cursor.getString(cursor.getColumnIndex(DBConstants.FLASH_CARD_BACK)),
-                    cursor.getString(cursor.getColumnIndex(DBConstants.FLASH_CARD_SECTION_ID))
+                    sectionColor, sectionName
             );
             paramsList.add(param);
         }

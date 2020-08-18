@@ -181,6 +181,7 @@ public class SectionsActivity extends AppCompatActivity {
     protected void onResume() {
         Log.i(TAG, "Resume ManageSection");
         super.onResume();
+        addRecyclerView();
     }
 
     public static Intent makeIntent(Context context) {

@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -14,10 +17,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import java.util.List;
+
+import tool.yogendra.flashcard.adapter.FlashCardRecyclerAdapter;
 import tool.yogendra.flashcard.card.AddCardActivity;
+import tool.yogendra.flashcard.database.FlashCardParams;
+import tool.yogendra.flashcard.database.SQLDBManager;
 
-public class HomeActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    RecyclerView recyclerView;
+    FlashCardRecyclerAdapter adapter;
+    SQLDBManager sqldbManager;
+    List<FlashCardParams> paramList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +55,41 @@ public class HomeActivity extends AppCompatActivity  implements NavigationView.O
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        addRecyclerView();
+    }
+
+    private void addRecyclerView() {
+        sqldbManager = new SQLDBManager(this);
+        recyclerView = findViewById(R.id.flashCardRecyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        try {
+            paramList = sqldbManager.getAllFlashCardsDataList();
+            adapter = new FlashCardRecyclerAdapter(paramList);
+            recyclerView.setAdapter(adapter);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(createHelperCallback());
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+        } catch (Exception e) {
+            Toast.makeText(HomeActivity.this, "Failed to get Flash Card Information " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private ItemTouchHelper.Callback createHelperCallback() {
+        return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                //deleteFlashCard(viewHolder.getAdapterPosition());
+            }
+
+        };
     }
 
     @Override
@@ -51,6 +100,12 @@ public class HomeActivity extends AppCompatActivity  implements NavigationView.O
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        addRecyclerView();
     }
 
     @Override

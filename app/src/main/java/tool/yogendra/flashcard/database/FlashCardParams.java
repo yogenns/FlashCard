@@ -5,14 +5,26 @@ public class FlashCardParams {
     private int flashCardId;
     private String flashCardFront;
     private String flashCardBack;
-    private String flashCardSectionId;
+    private String flashCardSectionColor;
+    private String flashCardSectionName;
 
-    public FlashCardParams(int flashCardId, String flashCardFront, String flashCardBack, String flashCardSectionId) {
+    public FlashCardParams(int flashCardId, String flashCardFront, String flashCardBack, String flashCardSectionColor, String flashCardSectionName) {
         this.flashCardId = flashCardId;
         this.flashCardFront = flashCardFront;
         this.flashCardBack = flashCardBack;
-        this.flashCardSectionId = flashCardSectionId;
+        this.flashCardSectionColor = flashCardSectionColor;
+        this.flashCardSectionName = flashCardSectionName;
     }
 
+    public String getFlashCardFront() {
+        return flashCardFront;
+    }
 
+    public String getFlashCardBack() {
+        return flashCardBack;
+    }
+
+    public String getFlashCardSectionColor() {
+        return flashCardSectionColor;
+    }
 }
