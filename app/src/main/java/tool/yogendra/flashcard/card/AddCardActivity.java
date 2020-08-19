@@ -120,7 +120,8 @@ public class AddCardActivity extends AppCompatActivity {
             contentValues.put(DBConstants.FLASH_CARD_FRONT, frontTxt.getText().toString());
             contentValues.put(DBConstants.FLASH_CARD_BACK, backTxt.getText().toString());
             contentValues.put(DBConstants.FLASH_CARD_SECTION_ID, sectionId);
-            sqldbManager.insertFlashCard(contentValues);
+            int result = sqldbManager.insertFlashCard(contentValues);
+            Log.i(TAG, "Insert Flash Card Result " + result);
             finish();
         } catch (Exception e) {
             e.printStackTrace();

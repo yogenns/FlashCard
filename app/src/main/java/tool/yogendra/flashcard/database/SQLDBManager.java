@@ -9,7 +9,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import tool.yogendra.flashcard.utils.Constants;
 
 public class SQLDBManager extends SQLiteOpenHelper {
 
@@ -97,5 +101,40 @@ public class SQLDBManager extends SQLiteOpenHelper {
 
     public void deleteFlashCard(int flashCardId) {
         this.getWritableDatabase().delete(DBConstants.FLASH_CARD_TABLE, DBConstants.FLASH_CARD_ID + "=?", new String[]{String.valueOf(flashCardId)});
+    }
+
+    public Map<String, Integer> getAllAccountsSummary() {
+        Map<String, Integer> records = new HashMap<>();
+        int numOfSections = 0;
+        int numOfFlashCards = 0;
+        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
+        sqLiteQueryBuilder.setTables(DBConstants.SECTION_TABLE);
+        Cursor cursor = sqLiteQueryBuilder.query(this.getWritableDatabase(), new String[]{"COUNT (*)"},
+                null, null, null, null, null);
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    numOfSections = cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        sqLiteQueryBuilder.setTables(DBConstants.FLASH_CARD_TABLE);
+        cursor = sqLiteQueryBuilder.query(this.getWritableDatabase(), new String[]{"COUNT (*)"},
+                null, null, null, null, null);
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    numOfFlashCards = cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        records.put(Constants.SUMMARY_FLASH_CARD_COUNT_KEY, numOfFlashCards);
+        records.put(Constants.SUMMARY_SECTION_COUNT_KEY, numOfSections);
+        return records;
     }
 }

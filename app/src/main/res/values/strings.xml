@@ -17,4 +17,5 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="card_checked">Card Checked</string>
+    <string name="summary">Summary</string>
 </resources>

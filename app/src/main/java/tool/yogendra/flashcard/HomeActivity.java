@@ -13,18 +13,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Map;
 
 import tool.yogendra.flashcard.adapter.FlashCardRecyclerAdapter;
 import tool.yogendra.flashcard.card.AddCardActivity;
 import tool.yogendra.flashcard.database.FlashCardParams;
 import tool.yogendra.flashcard.database.SQLDBManager;
+import tool.yogendra.flashcard.utils.Constants;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -37,6 +42,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        sqldbManager = new SQLDBManager(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,10 +63,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         addRecyclerView();
+        addButtonListener();
+    }
+
+    private void addButtonListener() {
+        Button summaryBtn = findViewById(R.id.summaryBtn);
+        summaryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSummaryOfRecords();
+            }
+        });
     }
 
     private void addRecyclerView() {
-        sqldbManager = new SQLDBManager(this);
         recyclerView = findViewById(R.id.flashCardRecyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -122,5 +138,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showSummaryOfRecords() {
+        try {
+
+            Map<String, Integer> records = sqldbManager.getAllAccountsSummary();
+            AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+            builder.setTitle("Records Summary");
+            builder.setMessage("Total FlashCard - " + records.get(Constants.SUMMARY_FLASH_CARD_COUNT_KEY) + "\n"
+                    + "Total Sections - " + records.get(Constants.SUMMARY_SECTION_COUNT_KEY) + "\n");
+            builder.setPositiveButton("Ok", null);
+            builder.show();
+        } catch (Exception e) {
+            Log.e("HomeActivity", "Exception while getting records summary", e);
+            Toast.makeText(HomeActivity.this, "Failed to get Summary " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }
