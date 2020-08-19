@@ -14,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +33,7 @@ import tool.yogendra.flashcard.database.SQLDBManager;
 import tool.yogendra.flashcard.utils.Constants;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+    private static final String TAG = "HomeActivity";
     RecyclerView recyclerView;
     FlashCardRecyclerAdapter adapter;
     SQLDBManager sqldbManager;
@@ -102,10 +103,42 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                //deleteFlashCard(viewHolder.getAdapterPosition());
+                deleteFlashCard(viewHolder.getAdapterPosition());
             }
 
         };
+    }
+
+    private void deleteFlashCard(int adapterPosition) {
+        Log.i(TAG, "Delete FlashCard at position - " + adapterPosition + " Name - " + paramList.get(adapterPosition).getFlashCardFront());
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this, R.style.datePicker);
+        builder.setTitle("Delete FlashCard");
+        builder.setIcon(android.R.drawable.ic_menu_delete);
+        final int pos = adapterPosition;
+        builder.setMessage("Are you sure you want to delete FlashCard? " + paramList.get(adapterPosition).getFlashCardFront());
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    int flashCardId = paramList.get(pos).getFlashCardId();
+                    String flashCardFront = paramList.get(pos).getFlashCardFront();
+                    sqldbManager.deleteFlashCard(flashCardId);
+                    paramList.remove(pos);
+                    adapter.notifyItemRemoved(pos);
+                    Log.i(TAG, "Successfully Deleted FlashCard with id - [" + flashCardId + "] Front - [" + flashCardFront + "]");
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception while deleting FlashCard ", e);
+                    Toast.makeText(HomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                adapter.notifyItemChanged(pos);
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -151,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             builder.setPositiveButton("Ok", null);
             builder.show();
         } catch (Exception e) {
-            Log.e("HomeActivity", "Exception while getting records summary", e);
+            Log.e(TAG, "Exception while getting records summary", e);
             Toast.makeText(HomeActivity.this, "Failed to get Summary " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }

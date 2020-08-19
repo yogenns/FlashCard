@@ -16,6 +16,10 @@ public class FlashCardParams {
         this.flashCardSectionName = flashCardSectionName;
     }
 
+    public int getFlashCardId() {
+        return flashCardId;
+    }
+
     public String getFlashCardFront() {
         return flashCardFront;
     }
